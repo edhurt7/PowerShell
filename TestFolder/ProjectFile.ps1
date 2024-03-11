@@ -13,10 +13,3 @@ Register-ScheduledTask -Action $action -Trigger $trigger -TaskName "MyDailyTask5
 Start-ScheduledTask -TaskName "MyDailyTask5"
 
 
-
-#Gets a list of Plug-n-Play devices with a status of ERROR, UNKNOWN, or DEGRADED
-
-$report = Get-PnpDevice -PresentOnly |Where-Object {$_.Status -ne 'OK'} | ft -Property Status,FriendlyName,Manufacturer,PSComputerName
-
-#Print results to file
-$report | Out-File -FilePath C:\report.txt
