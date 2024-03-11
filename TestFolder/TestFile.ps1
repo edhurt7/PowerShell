@@ -1,1 +1,2 @@
-Get-Date
+Get-Date | Format-List
+
