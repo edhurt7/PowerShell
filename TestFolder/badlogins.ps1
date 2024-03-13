@@ -8,7 +8,7 @@
 
 #Set my Variables
 $sourceGroup = "Sales"
-$targetGroup = "CN=Remote Desktop Users,CN=Builtin,DC=Adatum,DC=com"
+
 
 #Get all users from Sales
 $groupMembers = Get-ADGroupMember -Identity $sourceGroup | Where-Object {$_.objectClass -eq 'user'}
@@ -28,17 +28,18 @@ foreach ($member in $groupMembers) {
 $Department = Read-Host -Prompt 'What department do you want to search?'
 
 #Use the input to filter Get-ADUser
-$Users = Get-ADUser -Filter "Department -eq '$Department'" | Select-Object Name
+$Users = Get-ADUser -Filter "Department -eq '$Department'" | Select-Object -ExpandProperty Name
 
 
 foreach ($User in $Users){
-    if ($_.badPwdCount -gt 0 ) {
-        Write-Host "$User is having trouble logging in!"
+    if ($User.badPwdCount -gt 3 ) {
+        Set-ADAccountControl -Identity $User -Enabled $true
+        Write-Host "$($User.Name)'s account has been locked due to 3 unsuccessful login attempts."
     }
-    else {
-        Write-Host "$User is ok."
-    }
-}
+ }
+ 
+ Write-Host "All other users are having no login issues."
+
 
 
 
