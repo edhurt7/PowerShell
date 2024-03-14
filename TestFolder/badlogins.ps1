@@ -1,4 +1,4 @@
-# This script generates a report to show users that have bad login attempts
+# This script generates a report to show users that have multiple bad login attempts.
 
 ##############################################################################
 ## For the purpose of this exercise, I have to make sure the members of the ##
@@ -22,6 +22,13 @@ foreach ($member in $groupMembers) {
     Add-ADGroupMember -Identity "Remote Desktop Users" -Members "$userDN"
 }
 
+#################################################################################
+## After you perform the above step, you must go into Group Policy Editor      ##
+## by using gpedit.msc in a Run prompt.  Expand Computer Policy >              ##
+## Administrative Templates > Windows Components > Remote Desktop Services >   ##
+## Remote Desktop Session Host, and then Security.                             ##                                 ##
+################################################################################# 
+
 
 #Ask the user for the department they wish to search
 
@@ -34,7 +41,7 @@ $Users = Get-ADUser -Filter "Department -eq '$Department'" | Select-Object -Expa
 foreach ($User in $Users){
     if ($User.badPwdCount -gt 3 ) {
         Set-ADAccountControl -Identity $User -Enabled $true
-        Write-Host "$($User.Name)'s account has been locked due to 3 unsuccessful login attempts."
+        Write-Host "$User's account has been locked due to 3 unsuccessful login attempts."
     }
  }
  
