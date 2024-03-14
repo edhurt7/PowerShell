@@ -34,18 +34,24 @@ foreach ($member in $groupMembers) {
 
 $Department = Read-Host -Prompt 'What department do you want to search?'
 
-#Use the input to filter Get-ADUser
-$Users = Get-ADUser -Filter "Department -eq '$Department'" | Select-Object -ExpandProperty Name
+# Get the current date and time
+$CurrentDate = Get-Date
 
+# Calculate the start of the current week (Sunday)
+$StartOfWeek = $CurrentDate.AddDays(-1 * [int]$CurrentDate.DayOfWeek)
 
-foreach ($User in $Users){
-    if ($User.badPwdCount -gt 3 ) {
-        Set-ADAccountControl -Identity $User -Enabled $true
-        Write-Host "$User's account has been locked due to 3 unsuccessful login attempts."
+# Filter users in the Sales department
+$SalesUsers = Get-ADUser -Filter "Department -eq 'Sales'" -Properties badPwdCount,Name
+
+# Iterate through each user
+foreach ($User in $SalesUsers) {
+    # Check if the user has bad login attempts this week
+    if ($User.badPwdCount -gt 0) {
+        Write-Host "$($User.Name) has $($User.badPwdCount) bad login attempts this week, their last attempt was on $($User.LastBadPasswordAttempt)."
     }
- }
- 
- Write-Host "All other users are having no login issues."
+}
+
+
 
 
 
